@@ -1,0 +1,3 @@
+[submodule "ext/RTIMULib"]
+	path = ext/RTIMULib
+	url = git@github.com:richards-tech/RTIMULib.git
