@@ -14,6 +14,7 @@ class ImuData : public QObject
     Q_OBJECT
     Q_PROPERTY(QVector3D pose READ pose WRITE setPose NOTIFY poseChanged)
     Q_PROPERTY(QGeoCoordinate geoCoordinate READ geoCoordinate WRITE setGeoCoordinate NOTIFY geoCoordinateChanged)
+    Q_PROPERTY(int servoPosition READ servoPosition WRITE setServoPosition NOTIFY servoPositionChanged)
 
 public:
 
@@ -25,6 +26,11 @@ public:
     QGeoCoordinate geoCoordinate() const
     {
         return m_geoCoordinate;
+    }
+
+    int servoPosition() const
+    {
+        return m_servoPosition;
     }
 
 public slots:
@@ -46,16 +52,28 @@ public slots:
         emit geoCoordinateChanged(geoCoordinate);
     }
 
+    void setServoPosition(int servoPosition)
+    {
+        if (m_servoPosition == servoPosition)
+            return;
+
+        m_servoPosition = servoPosition;
+        emit servoPositionChanged(servoPosition);
+    }
+
 signals:
 
     void poseChanged(QVector3D pose);
 
     void geoCoordinateChanged(QGeoCoordinate geoCoordinate);
 
+    void servoPositionChanged(int servoPosition);
+
 private:
 
     void pollImu();
     void handleGpsPositionUpdated(const QGeoPositionInfo & update);
+    void handleServoPositionChanged(int servoPosition);
 
     QTimer poll_timer_;
 
@@ -69,6 +87,7 @@ private:
 
 
     QGeoCoordinate m_geoCoordinate;
+    int m_servoPosition;
 };
 
 #endif // IMUDATA_H

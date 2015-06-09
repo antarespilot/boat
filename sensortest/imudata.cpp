@@ -2,12 +2,15 @@
 #include <QDebug>
 #include <QtMath>
 
+#include <pigpio.h>
+
 ImuData::ImuData(QObject *parent)
     : QObject(parent)
     , imu_(nullptr)
     , pressure_(nullptr)
     , serialport_(nullptr)
     , positionsource_(nullptr)
+    , m_servoPosition(0)
 {
 }
 
@@ -48,6 +51,8 @@ bool ImuData::initialize()
     connect(positionsource_, &QNmeaPositionInfoSource::positionUpdated, this, &ImuData::handleGpsPositionUpdated);
     positionsource_->startUpdates();
 
+    connect(this, &ImuData::servoPositionChanged, this, &ImuData::handleServoPositionChanged);
+
     return true;
 }
 
@@ -70,5 +75,10 @@ void ImuData::handleGpsPositionUpdated(const QGeoPositionInfo &update)
 {
 //    qWarning() << "Got new position here " << update;
     setGeoCoordinate(update.coordinate());
+}
+
+void ImuData::handleServoPositionChanged(int servoPosition)
+{
+    gpioServo(25, servoPosition);
 }
 
