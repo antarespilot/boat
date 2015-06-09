@@ -30,3 +30,5 @@
 # Qt stuff
 *.pro.user
 build-*
+
+*.autosave

@@ -12,6 +12,7 @@ RESOURCES += qml.qrc
 QML_IMPORT_PATH =
 
 include(../ext/RTIMULib/RTIMULib/RTIMULib.pri)
+include(../ext/pigpio.pri)
 
 target.path = /home/pi
 
@@ -21,3 +22,4 @@ include(deployment.pri)
 HEADERS += \
     imudata.h
 
+LIBS += -lrt
