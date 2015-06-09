@@ -7,4 +7,4 @@ HEADERS += $$PWD/pigpio/command.h \
 SOURCES += $$PWD/pigpio/command.c \
            $$PWD/pigpio/pigpio.c
 
-
+LIBS += -lrt

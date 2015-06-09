@@ -22,4 +22,3 @@ include(deployment.pri)
 HEADERS += \
     imudata.h
 
-LIBS += -lrt
