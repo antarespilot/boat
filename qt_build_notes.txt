@@ -146,4 +146,18 @@ Dette er configure-linja jeg brukte:
 
 denne virka bedre
 
-./configure   -release   -opengl es2   -optimized-qmake   -no-pch   -make libs   -make tools    -reduce-exports   -sysroot /data/raspberrypi/raspberry-rootfs   -device linux-rasp-pi-g++   -device-option CROSS_COMPILE=/data/raspberrypi/gcc-4.7-linaro-rpi-gnueabihf/bin/arm-linux-gnueabihf-   -prefix /usr/local/Qt55rp -hostprefix /data/raspberrypi/qt55host -opensource -confirm-license
+./configure \
+-release \
+-opengl es2 \
+-optimized-qmake \
+-no-pch \
+-make libs \
+-make tools \
+-reduce-exports \
+-sysroot /data/raspberrypi/raspberry-rootfs \
+-device linux-rasp-pi-g++ \
+-device-option CROSS_COMPILE=/data/raspberrypi/gcc-4.7-linaro-rpi-gnueabihf/bin/arm-linux-gnueabihf- \
+-prefix /usr/local/Qt55rp \
+-hostprefix /data/raspberrypi/qt55host \
+-opensource \
+-confirm-license
