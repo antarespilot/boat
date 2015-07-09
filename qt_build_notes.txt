@@ -1,0 +1,149 @@
+The following how-to video shows step by step how to cross compile Qt 5.4.1 (or later) for Raspberry Pi. All commands can be found below.
+
+Web: http://www.tequnique.com
+Raspberry Pi 2: http://goo.gl/r9iQwp
+Raspberry Pi 2 Wifi adapter: http://goo.gl/BnHXVl
+
+##
+# 1.) Setup environment
+##
+
+mkdir ~/raspberry
+cd ~/raspberry
+
+wget http://www.tequnique.com/dl/raspberry...
+mv setdevenv setdevenv.sh
+wget http://www.tequnique.com/dl/raspberry...
+tar xfj gcc-4.7-linaro-rpi-gnueabihf.tbz
+
+# For 64 bit Ubuntu:
+sudo apt-get install ia32-libs
+# OR:
+sudo apt-get install g++-multilib zlib1g:i386
+# older ubuntu versions use: sudo apt-get install g++-multilib ia32-libs
+
+# On Raspberry (e.g. using SSH)
+ssh pi@"raspberry ip address"
+sudo apt-get update
+sudo apt-get upgrade
+
+sudo apt-get install libfontconfig1-dev libsqlite3-dev libxslt1-dev libssl-dev
+
+# For QMultimedia:
+sudo apt-get install libasound2-dev \ libavcodec-dev \ libavformat-dev \ libswscale-dev \ libgstreamer0.10-dev \ libgstreamer-plugins-base0.10-dev \ gstreamer-tools \ gstreamer0.10-plugins-good \ gstreamer0.10-plugins-bad
+
+# Shutdown raspberry
+sudo shutdown -h now
+
+# Remove SD card and insert into PC
+
+# Copy SD card to PC image
+# Windows: http://sourceforge.net/projects/win32...
+cd ~/raspberry
+sudo dd if=/dev/sdb of=raspberry-working-image.img
+
+# Mount image
+sudo /sbin/losetup /dev/loop0 raspberry-working-image.img
+
+# Determine block size: 1818624*512 = 931135488. NOTE: "1818624" is the value you get from this command:
+sudo /sbin/fdisk -l /dev/loop0
+
+sudo mkdir /mnt/raspberry-rootfs
+sudo mount -o loop,offset=931135488 raspberry-working-image.img /mnt/raspberry-rootfs
+
+# Cross compile tools
+source setdevenv.sh
+
+git clone https://gitorious.org/cross-compile-t...
+cd cross-compile-tools
+
+sudo ./fixQualifiedLibraryPaths $MOUNTPOINT ~/raspberry/gcc-4.7-linaro-rpi-gnueabihf­/bin/arm-linux-gnueabihf-gcc
+
+sudo ln -s \
+$MOUNTPOINT/opt/vc/include/interface/vmc­s_host/linux/vchost_config.h \
+$MOUNTPOINT/opt/vc/include/interface/vmc­s_host/vchost_config.h
+
+cd ..
+
+##
+# 2.) Qt
+##y
+
+# Download Qt (you can also use another version or the development GIT branch)
+wget http://download.qt.io/official_releas...
+tar xfvz qt-everywhere-opensource-src-5.4.1.tar.g­z
+cd qt-everywhere-opensource-src-5.4.1
+
+./configure \
+-release \
+-opengl es2 \
+-optimized-qmake \
+-no-pch \
+-make libs \
+-make tools \
+-reduce-exports \
+-sysroot /mnt/raspberry-rootfs \
+-device linux-rasp-pi-g++ \
+-device-option CROSS_COMPILE=~/raspberry/gcc-4.7-linaro­-rpi-gnueabihf/bin/arm-linux-gnueabihf- \
+-prefix /usr/local/Qt-5.4.1-raspberry \
+-opensource -nomake examples -nomake tests \
+-confirm-license
+
+# Use other values instead of "4" depending on the number of processor cores on your host machine
+make -j4
+sudo make -j4 install
+
+cd ..
+source setdevenv.sh
+sudo cp -r /usr/local/Qt-5.4.1-raspberry/mkspecs $MOUNTPOINT/usr/local/Qt-5.4.1-raspberry
+
+# Unmount image
+sync
+sudo umount /mnt/raspberry-rootfs
+
+# Copy image back to SD card
+# Windows: http://sourceforge.net/projects/win32...
+sudo dd bs=4M if=raspberry-working-image.img of=/dev/sdb
+
+# The SD card can now be inserted back into the Raspberry Pi.
+
+##
+# 3.) Setup Qt Creator. We assume that you have installed Qt Creator already.
+##
+
+1.) Add Generic linux device
+2.) Add compiler: GCC: /home/ham/raspberry/gcc-4.7-linaro-rpi-g­nueabihf/bin/arm-linux-gnueabihf-g++
+2.1) Add debugger: /home/ham/raspberry/gcc-4.7-linaro-rpi-g­nueabihf/bin/arm-linux-gnueabihf-gdb
+3.) Add Qt version: /usr/local/Qt-5.4.1-raspberry/bin/qmake
+4.) Add kit: sysroot: /mnt/raspberry-rootfs
+
+
+##
+# 4.) Development with Qt Creator
+##
+
+# Mount Raspberry image EVERY TIME BEFORE development:
+cd ~/raspberry
+sudo mount -o loop,offset=931135488 raspberry-working-image.img /mnt/raspberry-rootfs
+
+# Add the following lines to the project .pro file:
+target.path = /home/pi
+INSTALLS += target
+
+# Unmount image AFTER development
+sync
+sudo umount /mnt/raspberry-rootfs
+
+
+
+
+---------------
+
+Dette er configure-linja jeg brukte:
+
+./configure -release -opengl es2 -optimized-qmake -no-pch -make libs -make tools -reduce-exports -sysroot /data/raspberrypi/raspberry-rootfs -device linux-rasp-pi-g++ -device-option CROSS_COMPILE=/data/raspberrypi/gcc-4.7-linaro-rpi-gnueabihf/bin/arm-linux-gnueabihf- -prefix /usr/local/Qt-5.5.0-raspberry -opensource -nomake examples -nomake tests -confirm-license -gstreamer 1.0 -qpa eglfs
+
+
+denne virka bedre
+
+./configure   -release   -opengl es2   -optimized-qmake   -no-pch   -make libs   -make tools    -reduce-exports   -sysroot /data/raspberrypi/raspberry-rootfs   -device linux-rasp-pi-g++   -device-option CROSS_COMPILE=/data/raspberrypi/gcc-4.7-linaro-rpi-gnueabihf/bin/arm-linux-gnueabihf-   -prefix /usr/local/Qt55rp -hostprefix /data/raspberrypi/qt55host -opensource -confirm-license
