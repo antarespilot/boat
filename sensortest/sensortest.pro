@@ -4,7 +4,8 @@ QT += qml quick positioning serialport
 CONFIG += c++11
 
 SOURCES += main.cpp \
-    imudata.cpp
+    imudata.cpp \
+    mydaemon.cpp
 
 RESOURCES += qml.qrc
 
@@ -13,6 +14,8 @@ QML_IMPORT_PATH =
 
 include(../ext/RTIMULib/RTIMULib/RTIMULib.pri)
 include(../ext/pigpio.pri)
+include(../ext/gnublin-api.pri)
+include(../ext/mcp3008spi.pri)
 
 target.path = /home/pi
 
@@ -20,5 +23,6 @@ target.path = /home/pi
 include(deployment.pri)
 
 HEADERS += \
-    imudata.h
+    imudata.h \
+    mydaemon.h
 

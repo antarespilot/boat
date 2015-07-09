@@ -1,6 +1,14 @@
 [submodule "ext/RTIMULib"]
 	path = ext/RTIMULib
-	url = git@github.com:richards-tech/RTIMULib.git
+	#url = git@github.com:richards-tech/RTIMULib.git
+        #url = git@github.com:RTIMULib/RTIMULib.git
+        url = git@github.com:antarespilot/RTIMULib.git
 [submodule "ext/pigpio"]
 	path = ext/pigpio
 	url = git@github.com:joan2937/pigpio.git
+[submodule "ext/gublin-api"]
+	path = ext/gnublin-api
+	url = git@github.com:embeddedprojects/gnublin-api.git
+[submodule "ext/mcp3008spi"]
+	path = ext/mcp3008spi
+	url = git@github.com:halherta/RaspberryPi-mcp3008Spi.git

@@ -8,6 +8,24 @@ Window {
 
     property int fontSize: 70
 
+    Rectangle {
+        color: (imudata.ad2 > 0.5) ? "red" : "blue"
+        radius: 25
+        width: 100
+        height: 100
+
+        x: (parent.width-width)*imudata.ad0
+        y: (parent.height-height)*imudata.ad1
+    }
+
+    Text {
+        anchors.top: parent.top
+        anchors.left: parent.left
+        text: "PROPELL!" + imudata.ad3
+        font.pixelSize: fontSize
+        color: "white"
+    }
+
     ColumnLayout {
         anchors.centerIn: parent
         transform: [
